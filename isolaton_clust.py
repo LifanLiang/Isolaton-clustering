@@ -16,16 +16,17 @@ def adj2con(adj, n_iter = 10):
     Given an adjacency matrix, compute the probaility of path containing for each node started at each node.
     The matrix should be at the form of pandas DataFrame.
     '''
-    adj.values[[range(len(adj))]*2] = 0
+    adj.values[np.diag_indices_from(adj)] = 0
     adj = adj[adj.sum(1)>0]
+    adj = adj[adj.index]
     
     #adj.values[[range(len(adj))]*2] = adj.apply(lambda x: x[x>0].min(), axis=1) # Assign median edge weights to self loops
     trans = adj.div(adj.sum(1),0)
-    temp = pd.DataFrame(np.ones(np.shape(trans)))
+    temp = pd.DataFrame(np.ones_like(trans))
     temp.columns = trans.columns
     temp.index = trans.index
     for i in range(n_iter):
-        temp.values[[range(len(temp))]*2] = 0
+        temp.values[np.diag_indices_from(temp)] = 0
         temp = trans.dot(temp)
     return 1 - temp
 
