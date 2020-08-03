@@ -42,13 +42,15 @@ def simrank(deg):
     return s_cur
 
 def filter_single_nodes(G):
+    G = nx.Graph(G)
     G.remove_edges_from([(u,v) for u,v in G.edges() if G[u][v]['weight']==0])
     pert_deg = G.degree()
-    G.remove_nodes_from([e for e in pert_deg if pert_deg[e] == 0])
+    G.remove_nodes_from([a for a,b in pert_deg if pert_deg[a] == 0])
+    return G
 
 def find_common_nodes(g1,g2):
-    filter_single_nodes(g1)
-    filter_single_nodes(g2)
+    g1 = filter_single_nodes(g1)
+    g2 = filter_single_nodes(g2)
     commgenes = list(set.intersection(set(g1.nodes()),set(g2.nodes()))) 
     while g1.nodes() != g2.nodes():
         g1 = g1.subgraph(commgenes)
